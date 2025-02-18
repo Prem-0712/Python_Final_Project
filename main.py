@@ -53,3 +53,44 @@ def search_event():
     print("\n")
 
 search_event()
+
+def update_event():
+    if not events:
+        print("\n❌ No events available to update.\n")
+        return
+
+    search_key = input("Enter event name or client name to find the event: ").strip().lower()
+    
+    found_events = [event for event in events if search_key in event["name"].lower() or search_key in event["client"].lower()]
+
+    if not found_events:
+        print("\n❌ No matching events found.\n")
+        return
+
+    print("\n🔍 Matching Events:\n")
+    for idx, event in enumerate(found_events, start=1):
+        print(f"{idx}. {event['name']} | Client: {event['client']} | Date: {event['date']} | Venue: {event['venue']} | Status: {event['status']}")
+    
+    try:
+        choice = int(input("\nEnter the number of the event you want to update: "))
+        event_to_update = found_events[choice - 1]
+    except (ValueError, IndexError):
+        print("\n❌ Invalid choice.\n")
+        return
+
+    # Ask if only status needs to be updated
+    update_status_only = input("Do you want to update only the status? (yes/no): ").strip().lower()
+    
+    if update_status_only == "yes":
+        event_to_update["status"] = input("Enter new status (Planning/Confirmed/Completed): ").strip().capitalize()
+        print("\n✅ Event status updated successfully!\n")
+        return
+
+    # Otherwise, update all fields
+    event_to_update["name"] = input(f"Enter new event name ({event_to_update['name']}): ") or event_to_update["name"]
+    event_to_update["client"] = input(f"Enter new client name ({event_to_update['client']}): ") or event_to_update["client"]
+    event_to_update["date"] = input(f"Enter new date ({event_to_update['date']}): ") or event_to_update["date"]
+    event_to_update["venue"] = input(f"Enter new venue ({event_to_update['venue']}): ") or event_to_update["venue"]
+    event_to_update["status"] = input(f"Enter new status ({event_to_update['status']}): ").strip().capitalize() or event_to_update["status"]
+
+    print("\n✅ Event updated successfully!\n")
