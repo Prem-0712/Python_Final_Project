@@ -94,3 +94,36 @@ def update_event():
     event_to_update["status"] = input(f"Enter new status ({event_to_update['status']}): ").strip().capitalize() or event_to_update["status"]
 
     print("\n✅ Event updated successfully!\n")
+
+def delete_event():
+    if not events:
+        print("\n❌ No events available to delete.\n")
+        return
+
+    search_key = input("Enter event name or client name to find the event: ").strip().lower()
+    
+    found_events = [event for event in events if search_key in event["name"].lower() or search_key in event["client"].lower()]
+
+    if not found_events:
+        print("\n❌ No matching events found.\n")
+        return
+
+    print("\n🗑️ Matching Events:\n")
+    for idx, event in enumerate(found_events, start=1):
+        print(f"{idx}. {event['name']} | Client: {event['client']} | Date: {event['date']} | Venue: {event['venue']} | Status: {event['status']}")
+    
+    try:
+        choice = int(input("\nEnter the number of the event you want to delete: "))
+        event_to_delete = found_events[choice - 1]
+    except (ValueError, IndexError):
+        print("\n❌ Invalid choice.\n")
+        return
+
+    confirm = input(f"Are you sure you want to delete '{event_to_delete['name']}'? (yes/no): ").strip().lower()
+    if confirm == "yes":
+        events.remove(event_to_delete)
+        print("\n✅ Event deleted successfully!\n")
+    else:
+        print("\n❌ Deletion canceled.\n")
+
+delete_event()
