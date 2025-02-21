@@ -52,48 +52,60 @@ def search_event():
         print(f"{idx}. {event['name']} | Client: {event['client']} | Date: {event['date']} | Venue: {event['venue']} | Status: {event['status']}")
     print("\n")
 
-search_event()
+# search_event()
 
 def update_event():
     if not events:
         print("\n❌ No events available to update.\n")
         return
-
+    
     search_key = input("Enter event name or client name to find the event: ").strip().lower()
     
-    found_events = [event for event in events if search_key in event["name"].lower() or search_key in event["client"].lower()]
-
-    if not found_events:
+    event_to_update = None
+    for event in events:
+        if search_key in event["name"].lower() or search_key in event["client"].lower():
+            event_to_update = event
+            break  # Stop after finding the first matching event
+    
+    if event_to_update is None:
         print("\n❌ No matching events found.\n")
         return
 
-    print("\n🔍 Matching Events:\n")
-    for idx, event in enumerate(found_events, start=1):
-        print(f"{idx}. {event['name']} | Client: {event['client']} | Date: {event['date']} | Venue: {event['venue']} | Status: {event['status']}")
+    print("\n🔍 Event Found:\n")
+    print(f"{event_to_update['name']} | Client: {event_to_update['client']} | Date: {event_to_update['date']} | Venue: {event_to_update['venue']} | Status: {event_to_update['status']}")
     
-    try:
-        choice = int(input("\nEnter the number of the event you want to update: "))
-        event_to_update = found_events[choice - 1]
-    except (ValueError, IndexError):
-        print("\n❌ Invalid choice.\n")
-        return
-
-    # Ask if only status needs to be updated
-    update_status_only = input("Do you want to update only the status? (yes/no): ").strip().lower()
+    update_status_only = input("\nDo you want to update only the status? (yes/no): ").strip().lower()
     
     if update_status_only == "yes":
-        event_to_update["status"] = input("Enter new status (Planning/Confirmed/Completed): ").strip().capitalize()
+        new_status = input("Enter new status (Planning/Confirmed/Completed): ").strip().capitalize()
+        if new_status:
+            event_to_update["status"] = new_status
         print("\n✅ Event status updated successfully!\n")
-        return
+    
+    else:
+        new_name = input(f"Enter new event name ({event_to_update['name']}): ").strip()
+        if new_name:
+            event_to_update["name"] = new_name
+        
+        new_client = input(f"Enter new client name ({event_to_update['client']}): ").strip()
+        if new_client:
+            event_to_update["client"] = new_client
+        
+        new_date = input(f"Enter new date ({event_to_update['date']}): ").strip()
+        if new_date:
+            event_to_update["date"] = new_date
+        
+        new_venue = input(f"Enter new venue ({event_to_update['venue']}): ").strip()
+        if new_venue:
+            event_to_update["venue"] = new_venue
+        
+        new_status = input(f"Enter new status ({event_to_update['status']}): ").strip().capitalize()
+        if new_status:
+            event_to_update["status"] = new_status
+        
+        print("\n✅ Event updated successfully!\n")
 
-    # Otherwise, update all fields
-    event_to_update["name"] = input(f"Enter new event name ({event_to_update['name']}): ") or event_to_update["name"]
-    event_to_update["client"] = input(f"Enter new client name ({event_to_update['client']}): ") or event_to_update["client"]
-    event_to_update["date"] = input(f"Enter new date ({event_to_update['date']}): ") or event_to_update["date"]
-    event_to_update["venue"] = input(f"Enter new venue ({event_to_update['venue']}): ") or event_to_update["venue"]
-    event_to_update["status"] = input(f"Enter new status ({event_to_update['status']}): ").strip().capitalize() or event_to_update["status"]
-
-    print("\n✅ Event updated successfully!\n")
+update_event()
 
 def delete_event():
     if not events:
